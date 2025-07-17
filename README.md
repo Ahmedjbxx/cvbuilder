@@ -170,5 +170,6 @@ This CV builder is designed to be extensible:
 This project is open source and available under the MIT License.
 
 ---
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/Ahmedjbxx/cvbuilder?utm_source=oss&utm_medium=github&utm_campaign=Ahmedjbxx%2Fcvbuilder&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 
 **Built with ❤️ using Next.js, TypeScript, and modern web technologies.** 
