@@ -1,7 +1,34 @@
 'use client';
 
 import React from 'react';
-import type { ResumeData, SectionConfig } from '@/types/resume';
+import type { ResumeData, SectionConfig, Course } from '@/types/resume';
+
+// Helper function to format course date range
+const formatCourseDate = (course: Course): string => {
+  const monthOptions = [
+    { value: '01', label: 'January' },
+    { value: '02', label: 'February' },
+    { value: '03', label: 'March' },
+    { value: '04', label: 'April' },
+    { value: '05', label: 'May' },
+    { value: '06', label: 'June' },
+    { value: '07', label: 'July' },
+    { value: '08', label: 'August' },
+    { value: '09', label: 'September' },
+    { value: '10', label: 'October' },
+    { value: '11', label: 'November' },
+    { value: '12', label: 'December' }
+  ];
+
+  const startDate = `${monthOptions.find(m => m.value === course.startMonth)?.label || ''} ${course.startYear}`;
+  if (course.ongoing) {
+    return `${startDate} - Present`;
+  }
+  const endDate = course.endMonth && course.endYear 
+    ? `${monthOptions.find(m => m.value === course.endMonth)?.label || ''} ${course.endYear}`
+    : '';
+  return endDate ? `${startDate} - ${endDate}` : startDate;
+};
 
 interface TemplateProps {
   data: ResumeData;
@@ -230,7 +257,7 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data, sections, styleS
           <div className="modern-section mb-6">
             <style jsx>{sectionStyles}</style>
             <h2>Profile</h2>
-            <div dangerouslySetInnerHTML={{ __html: data.profile }} />
+            <div className="ql-editor" dangerouslySetInnerHTML={{ __html: data.profile }} />
           </div>
         ) : null;
       
@@ -327,7 +354,121 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data, sections, styleS
           </div>
         ) : null;
 
-      // Add other sections as needed...
+      case 'achievements':
+        return data.achievements.length > 0 ? (
+          <div className="modern-section mb-6">
+            <style jsx>{sectionStyles}</style>
+            <h2>Achievements</h2>
+            {data.achievements.map((achievement) => (
+              <div key={achievement.id} className="entry">
+                <div dangerouslySetInnerHTML={{ __html: achievement.description }} />
+              </div>
+            ))}
+          </div>
+        ) : null;
+
+      case 'certificates':
+        return data.certificates.length > 0 ? (
+          <div className="modern-section mb-6">
+            <style jsx>{sectionStyles}</style>
+            <h2>Certifications</h2>
+            {data.certificates.map((cert) => (
+              <div key={cert.id} className="entry">
+                <div className="entry-header">
+                  <div>
+                    <h3>{cert.name}</h3>
+                    <p className="text-gray-700">{cert.issuer}</p>
+                  </div>
+                  <span className="entry-date">{cert.date}</span>
+                </div>
+                {cert.description && (
+                  <div className="text-sm text-gray-700" dangerouslySetInnerHTML={{ __html: cert.description }} />
+                )}
+              </div>
+            ))}
+          </div>
+        ) : null;
+
+      case 'courses':
+        return data.courses.length > 0 ? (
+          <div className="modern-section mb-6">
+            <style jsx>{sectionStyles}</style>
+            <h2>Courses</h2>
+            {data.courses.map((course) => (
+              <div key={course.id} className="entry">
+                <div className="entry-header">
+                  <div>
+                    <h3>{course.name}</h3>
+                    <p className="text-gray-700">{course.institution}</p>
+                  </div>
+                  <span className="entry-date">{formatCourseDate(course)}</span>
+                </div>
+                {course.description && (
+                  <div className="text-sm text-gray-700" dangerouslySetInnerHTML={{ __html: course.description }} />
+                )}
+              </div>
+            ))}
+          </div>
+        ) : null;
+
+      case 'internships':
+        return data.internships.length > 0 ? (
+          <div className="modern-section mb-6">
+            <style jsx>{sectionStyles}</style>
+            <h2>Internships</h2>
+            {data.internships.map((internship) => (
+              <div key={internship.id} className="entry">
+                <div className="entry-header">
+                  <div>
+                    <h3>{internship.position}</h3>
+                    <p className="text-gray-700">{internship.company}</p>
+                  </div>
+                  <span className="entry-date">
+                    {internship.start} - {internship.ongoing ? 'Present' : internship.end}
+                  </span>
+                </div>
+                {internship.description && (
+                  <div className="text-sm text-gray-700" dangerouslySetInnerHTML={{ __html: internship.description }} />
+                )}
+              </div>
+            ))}
+          </div>
+        ) : null;
+
+      case 'qualities':
+        return data.qualities.length > 0 ? (
+          <div className="modern-section mb-6">
+            <style jsx>{sectionStyles}</style>
+            <h2>Personal Qualities</h2>
+            <div className="flex flex-wrap gap-2">
+              {data.qualities.map((quality) => (
+                <span key={quality.id} className="tag">
+                  {quality.quality}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null;
+
+      case 'references':
+        return data.references.length > 0 ? (
+          <div className="modern-section mb-6">
+            <style jsx>{sectionStyles}</style>
+            <h2>References</h2>
+            {data.references.map((reference) => (
+              <div key={reference.id} className="entry">
+                <h3>{reference.name}</h3>
+                <p className="text-gray-700">{reference.company}</p>
+                <p className="text-sm text-gray-600">{reference.position}</p>
+                <div className="text-sm mt-1 text-gray-700">
+                  <div>Email: {reference.email}</div>
+                  <div>Phone: {reference.phone}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : null;
+
       default:
         return null;
     }
@@ -351,4 +492,4 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data, sections, styleS
       ))}
     </div>
   );
-}; 
+};

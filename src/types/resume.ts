@@ -57,6 +57,7 @@ export interface Language {
 export interface Course {
   id: string;
   name: string;
+  institution: string;
   startMonth: string;
   startYear: string;
   endMonth: string;
@@ -68,8 +69,11 @@ export interface Course {
 export interface Internship {
   id: string;
   position: string;
+  company: string;
   employer: string;
   city: string;
+  start: string;
+  end: string;
   startMonth: string;
   startYear: string;
   endMonth: string;
@@ -94,7 +98,9 @@ export interface ExtracurricularActivity {
 export interface Reference {
   id: string;
   name: string;
+  company: string;
   organization: string;
+  position: string;
   city: string;
   phone: string;
   email: string;
@@ -108,6 +114,8 @@ export interface Quality {
 export interface Certificate {
   id: string;
   name: string;
+  issuer: string;
+  date: string;
   startMonth: string;
   startYear: string;
   endMonth: string;
@@ -220,4 +228,4 @@ export type CreateExtracurricularActivity = Omit<ExtracurricularActivity, 'id'>;
 export type CreateReference = Omit<Reference, 'id'>;
 export type CreateQuality = Omit<Quality, 'id'>;
 export type CreateCertificate = Omit<Certificate, 'id'>;
-export type CreateAchievement = Omit<Achievement, 'id'>; 
+export type CreateAchievement = Omit<Achievement, 'id'>;

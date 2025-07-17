@@ -1,14 +1,18 @@
 'use client';
 
+import React, { useState } from 'react';
+import { useDrag, useDrop } from 'react-dnd';
 import { useResumeStore } from '@/store/useResumeStore';
 import { Input, Button, Select, RichTextEditor } from '@/components/ui';
-import { useState } from 'react';
 import type { Internship } from '@/types/resume';
 
 interface InternshipFormData {
   position: string;
+  company: string;
   employer: string;
   city: string;
+  start: string;
+  end: string;
   startMonth: string;
   startYear: string;
   endMonth: string;
@@ -38,14 +42,124 @@ const yearOptions = Array.from({ length: 50 }, (_, i) => {
   return { value: year.toString(), label: year.toString() };
 });
 
+interface DragItem {
+  type: string;
+  id: string;
+  index: number;
+}
+
+interface DraggableInternshipItemProps {
+  internship: Internship;
+  index: number;
+  moveInternship: (dragIndex: number, hoverIndex: number) => void;
+  onEdit: (internship: Internship) => void;
+  onDelete: (id: string) => void;
+  formatDateRange: (internship: Internship) => string;
+}
+
+const DraggableInternshipItem: React.FC<DraggableInternshipItemProps> = ({
+  internship,
+  index,
+  moveInternship,
+  onEdit,
+  onDelete,
+  formatDateRange,
+}) => {
+  const dragRef = React.useRef<HTMLDivElement>(null);
+  const dropRef = React.useRef<HTMLDivElement>(null);
+
+  const [{ isDragging }, drag] = useDrag({
+    type: 'internship',
+    item: { type: 'internship', id: internship.id, index },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  const [, drop] = useDrop({
+    accept: 'internship',
+    hover: (item: DragItem) => {
+      if (!item) return;
+      
+      const dragIndex = item.index;
+      const hoverIndex = index;
+
+      if (dragIndex === hoverIndex) return;
+
+      moveInternship(dragIndex, hoverIndex);
+      item.index = hoverIndex;
+    }
+  });
+
+  drag(dragRef);
+  drop(dropRef);
+
+  return (
+    <div
+      ref={dropRef}
+      className={`border border-gray-200 rounded-lg p-4 bg-gray-50 ${
+        isDragging ? 'opacity-50' : ''
+      }`}
+    >
+      <div className="flex justify-between items-start mb-2">
+        <div className="flex items-start space-x-3 flex-1">
+          <div
+            ref={dragRef}
+            className="cursor-move text-gray-400 hover:text-gray-600 mt-1"
+            title="Drag to reorder"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <h4 className="font-medium text-gray-900">{internship.position}</h4>
+            <p className="text-sm text-gray-600">{internship.employer} • {internship.city}</p>
+            <p className="text-xs text-gray-500">{formatDateRange(internship)}</p>
+          </div>
+        </div>
+        <div className="flex space-x-2">
+          <button
+            onClick={() => onEdit(internship)}
+            className="btn-icon"
+            title="Edit"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+            </svg>
+          </button>
+          <button
+            onClick={() => onDelete(internship.id)}
+            className="btn-icon text-red-600 hover:text-red-700"
+            title="Delete"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      {internship.description && (
+        <div 
+          className="text-sm text-gray-700 mt-2" 
+          dangerouslySetInnerHTML={{ __html: internship.description }}
+        />
+      )}
+    </div>
+  );
+};
+
 export const InternshipsSection: React.FC = () => {
-  const { resumeData, addInternship, updateInternship, deleteInternship } = useResumeStore();
+  const { resumeData, addInternship, updateInternship, deleteInternship, reorderInternships } = useResumeStore();
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<InternshipFormData>({
     position: '',
+    company: '',
     employer: '',
     city: '',
+    start: '',
+    end: '',
     startMonth: '',
     startYear: '',
     endMonth: '',
@@ -57,8 +171,11 @@ export const InternshipsSection: React.FC = () => {
   const resetForm = () => {
     setFormData({
       position: '',
+      company: '',
       employer: '',
       city: '',
+      start: '',
+      end: '',
       startMonth: '',
       startYear: '',
       endMonth: '',
@@ -84,8 +201,11 @@ export const InternshipsSection: React.FC = () => {
   const handleEdit = (internship: Internship) => {
     setFormData({
       position: internship.position,
+      company: internship.company,
       employer: internship.employer,
       city: internship.city,
+      start: internship.start,
+      end: internship.end,
       startMonth: internship.startMonth,
       startYear: internship.startYear,
       endMonth: internship.endMonth,
@@ -116,45 +236,27 @@ export const InternshipsSection: React.FC = () => {
     return endDate ? `${startDate} - ${endDate}` : startDate;
   };
 
+  const moveInternship = (dragIndex: number, hoverIndex: number) => {
+    const draggedItem = resumeData.internships[dragIndex];
+    const newInternships = [...resumeData.internships];
+    newInternships.splice(dragIndex, 1);
+    newInternships.splice(hoverIndex, 0, draggedItem);
+    reorderInternships(newInternships);
+  };
+
   return (
     <div className="space-y-4">
       {/* Existing Internship Entries */}
-      {resumeData.internships.map((internship) => (
-        <div key={internship.id} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-          <div className="flex justify-between items-start mb-2">
-            <div className="flex-1">
-              <h4 className="font-medium text-gray-900">{internship.position}</h4>
-              <p className="text-sm text-gray-600">{internship.employer} • {internship.city}</p>
-              <p className="text-xs text-gray-500">{formatDateRange(internship)}</p>
-            </div>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => handleEdit(internship)}
-                className="btn-icon"
-                title="Edit"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
-              </button>
-              <button
-                onClick={() => handleDelete(internship.id)}
-                className="btn-icon text-red-600 hover:text-red-700"
-                title="Delete"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            </div>
-          </div>
-          {internship.description && (
-            <div 
-              className="text-sm text-gray-700 mt-2" 
-              dangerouslySetInnerHTML={{ __html: internship.description }}
-            />
-          )}
-        </div>
+      {resumeData.internships.map((internship, index) => (
+        <DraggableInternshipItem
+          key={internship.id}
+          internship={internship}
+          index={index}
+          moveInternship={moveInternship}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          formatDateRange={formatDateRange}
+        />
       ))}
 
       {/* Add/Edit Form */}
@@ -262,4 +364,4 @@ export const InternshipsSection: React.FC = () => {
       )}
     </div>
   );
-}; 
+};

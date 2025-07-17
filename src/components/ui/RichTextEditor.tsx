@@ -36,7 +36,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       toolbar: [
         ['bold', 'italic', 'underline'],
         [{ list: 'ordered' }, { list: 'bullet' }],
-        [{ align: [] }],
+        [{ align: ['', 'center', 'right', 'justify'] }],
         ['link'],
         ['clean'],
       ],
@@ -54,10 +54,42 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     'link',
   ];
 
+  // Add custom styles for Quill editor
+  const customStyles = `
+    .ql-editor {
+      min-height: ${minHeight}px;
+    }
+    .ql-editor ol {
+      list-style-type: decimal !important;
+      padding-left: 1.5em !important;
+    }
+    .ql-editor ul {
+      list-style-type: disc !important;
+      padding-left: 1.5em !important;
+    }
+    .ql-editor.ql-blank::before {
+      font-style: normal;
+      color: #9ca3af;
+    }
+    .ql-editor p {
+      margin-bottom: 0.5em;
+    }
+    .ql-editor p[data-align='center'] {
+      text-align: center;
+    }
+    .ql-editor p[data-align='right'] {
+      text-align: right;
+    }
+    .ql-editor p[data-align='justify'] {
+      text-align: justify;
+    }
+  `;
+
   const editorId = `editor-${Math.random().toString(36).substr(2, 9)}`;
 
   return (
     <div className="w-full">
+      <style>{customStyles}</style>
       {label && (
         <label
           htmlFor={editorId}
@@ -69,11 +101,10 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       )}
       <div
         className={clsx(
-          'rich-text-editor',
+          'rich-text-editor border border-gray-300 rounded-md overflow-hidden',
           error && 'border-red-300',
           className
         )}
-        style={{ minHeight: minHeight + 50 }} // Account for toolbar height
       >
         <ReactQuill
           value={value}
@@ -82,9 +113,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           formats={formats}
           placeholder={placeholder}
           theme="snow"
-          style={{
-            height: minHeight,
-          }}
+          id={editorId}
         />
       </div>
       {error && (
@@ -95,4 +124,4 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       )}
     </div>
   );
-}; 
+};

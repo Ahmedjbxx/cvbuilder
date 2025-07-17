@@ -1,7 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server';
 import puppeteer from 'puppeteer';
-import type { ResumeData, SectionConfig, StyleSettings } from '@/types/resume';
+import type { ResumeData, SectionConfig, StyleSettings, Course } from '@/types/resume';
 import { getTemplate } from '@/lib/templates';
+
+// Helper function to format course date range
+function formatCourseDate(course: Course): string {
+  const monthOptions = [
+    { value: '01', label: 'January' },
+    { value: '02', label: 'February' },
+    { value: '03', label: 'March' },
+    { value: '04', label: 'April' },
+    { value: '05', label: 'May' },
+    { value: '06', label: 'June' },
+    { value: '07', label: 'July' },
+    { value: '08', label: 'August' },
+    { value: '09', label: 'September' },
+    { value: '10', label: 'October' },
+    { value: '11', label: 'November' },
+    { value: '12', label: 'December' }
+  ];
+
+  const startDate = `${monthOptions.find(m => m.value === course.startMonth)?.label || ''} ${course.startYear}`;
+  if (course.ongoing) {
+    return `${startDate} - Present`;
+  }
+  const endDate = course.endMonth && course.endYear 
+    ? `${monthOptions.find(m => m.value === course.endMonth)?.label || ''} ${course.endYear}`
+    : '';
+  return endDate ? `${startDate} - ${endDate}` : startDate;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -155,6 +182,33 @@ function generateHTMLContent(
     }
   </script>
   <style>
+    /* Quill Editor Styles */
+    .ql-editor {
+      padding: 0 !important;
+    }
+    .ql-editor ol {
+      list-style-type: decimal !important;
+      padding-left: 1.5em !important;
+      margin-left: 0.5em;
+    }
+    .ql-editor ul {
+      list-style-type: disc !important;
+      padding-left: 1.5em !important;
+      margin-left: 0.5em;
+    }
+    .ql-editor p {
+      margin-bottom: 0.5em;
+    }
+    .ql-editor p[data-align='center'] {
+      text-align: center;
+    }
+    .ql-editor p[data-align='right'] {
+      text-align: right;
+    }
+    .ql-editor p[data-align='justify'] {
+      text-align: justify;
+    }
+    
     body {
       font-family: ${styleSettings.fontFamily}, sans-serif;
       font-size: ${styleSettings.fontSize}px;
@@ -326,7 +380,7 @@ function renderSectionHTML(
       return resumeData.profile ? `
         <div class="${isModern ? 'modern-section' : 'classic-section'} mb-6">
           <h2>${isModern ? 'Profile' : 'Professional Summary'}</h2>
-          <div>${resumeData.profile}</div>
+          <div class="ql-editor">${resumeData.profile}</div>
         </div>` : '';
 
     case 'employment':
@@ -344,7 +398,7 @@ function renderSectionHTML(
                   ${emp.start} - ${emp.ongoing ? 'Present' : emp.end}
                 </span>
               </div>
-              ${emp.description ? `<div class="text-sm text-gray-700">${emp.description}</div>` : ''}
+              ${emp.description ? `<div class="ql-editor text-sm text-gray-700">${emp.description}</div>` : ''}
             </div>
           `).join('')}
         </div>` : '';
@@ -364,7 +418,7 @@ function renderSectionHTML(
                   ${edu.start} - ${edu.ongoing ? 'Present' : edu.end}
                 </span>
               </div>
-              ${edu.description ? `<div class="text-sm text-gray-700">${edu.description}</div>` : ''}
+              ${edu.description ? `<div class="ql-editor text-sm text-gray-700">${edu.description}</div>` : ''}
             </div>
           `).join('')}
         </div>` : '';
@@ -406,6 +460,114 @@ function renderSectionHTML(
                 `<span class="inline text-gray-700 mr-4">${hobby}</span>`
             ).join('')}
           </div>
+        </div>` : '';
+
+    case 'achievements':
+      return resumeData.achievements.length > 0 ? `
+        <div class="${isModern ? 'modern-section' : 'classic-section'} mb-6">
+          <h2>Achievements</h2>
+          <div class="space-y-3">
+            ${resumeData.achievements.map(achievement => `
+              <div class="ql-editor text-sm text-gray-700">${achievement.description}</div>
+            `).join('')}
+          </div>
+        </div>` : '';
+
+    case 'certificates':
+      return resumeData.certificates.length > 0 ? `
+        <div class="${isModern ? 'modern-section' : 'classic-section'} mb-6">
+          <h2>Certificates</h2>
+          ${resumeData.certificates.map(cert => `
+            <div class="entry mb-4 pb-3 ${isModern ? 'border-b border-gray-100' : ''}">
+              <div class="flex justify-between items-start mb-2">
+                <div>
+                  <h3 class="font-semibold text-gray-900">${cert.name}</h3>
+                  <p class="text-gray-700">${cert.issuer}</p>
+                </div>
+                <span class="text-sm text-gray-600 whitespace-nowrap">${cert.date}</span>
+              </div>
+              ${cert.description ? `<div class="ql-editor text-sm text-gray-700">${cert.description}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>` : '';
+
+    case 'courses':
+      return resumeData.courses.length > 0 ? `
+        <div class="${isModern ? 'modern-section' : 'classic-section'} mb-6">
+          <h2>Courses</h2>
+          ${resumeData.courses.map(course => `
+            <div class="entry mb-4 pb-3 ${isModern ? 'border-b border-gray-100' : ''}">
+              <div class="flex justify-between items-start mb-2">
+                <div>
+                  <h3 class="font-semibold text-gray-900">${course.name}</h3>
+                  <p class="text-gray-700">${course.institution}</p>
+                </div>
+                <span class="text-sm text-gray-600 whitespace-nowrap">${formatCourseDate(course)}</span>
+              </div>
+              ${course.description ? `<div class="ql-editor text-sm text-gray-700">${course.description}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>` : '';
+
+    case 'internships':
+      return resumeData.internships.length > 0 ? `
+        <div class="${isModern ? 'modern-section' : 'classic-section'} mb-6">
+          <h2>Internships</h2>
+          ${resumeData.internships.map(internship => `
+            <div class="entry mb-4 pb-3 ${isModern ? 'border-b border-gray-100' : ''}">
+              <div class="flex justify-between items-start mb-2">
+                <div>
+                  <h3 class="font-semibold text-gray-900">${internship.position}</h3>
+                  <p class="text-gray-700">${internship.company}, ${internship.city}</p>
+                </div>
+                <span class="text-sm text-gray-600 whitespace-nowrap">
+                  ${internship.start} - ${internship.ongoing ? 'Present' : internship.end}
+                </span>
+              </div>
+              ${internship.description ? `<div class="ql-editor text-sm text-gray-700">${internship.description}</div>` : ''}
+            </div>
+          `).join('')}
+        </div>` : '';
+
+    case 'qualities':
+      return resumeData.qualities.length > 0 ? `
+        <div class="${isModern ? 'modern-section' : 'classic-section'} mb-6">
+          <h2>Qualities</h2>
+          <div class="flex flex-wrap gap-2">
+            ${resumeData.qualities.map(quality => 
+              isModern ? 
+                `<span class="tag">${quality.quality}</span>` :
+                `<span class="inline text-gray-700 mr-4">${quality.quality}</span>`
+            ).join('')}
+          </div>
+        </div>` : '';
+
+    case 'references':
+      return resumeData.references.length > 0 ? `
+        <div class="${isModern ? 'modern-section' : 'classic-section'} mb-6">
+          <h2>References</h2>
+          ${resumeData.references.map(ref => `
+            <div class="entry mb-4 pb-3 ${isModern ? 'border-b border-gray-100' : ''}">
+              <div class="mb-2">
+                <h3 class="font-semibold text-gray-900">${ref.name}</h3>
+                <p class="text-gray-700">${ref.position} at ${ref.company}</p>
+              </div>
+              <div class="text-sm text-gray-600">
+                <div class="flex items-center gap-2 mb-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  ${ref.email}
+                </div>
+                <div class="flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  ${ref.phone}
+                </div>
+              </div>
+            </div>
+          `).join('')}
         </div>` : '';
 
     default:
@@ -502,4 +664,4 @@ function renderPersonalDetailsHTML(
         </div>
       </div>`;
   }
-} 
+}

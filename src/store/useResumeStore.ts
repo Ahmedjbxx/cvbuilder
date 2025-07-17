@@ -112,35 +112,42 @@ interface ResumeStore {
   addEducation: (education: Omit<Education, 'id'>) => void;
   updateEducation: (id: string, education: Partial<Education>) => void;
   deleteEducation: (id: string) => void;
+  reorderEducation: (education: Education[]) => void;
 
   // Employment Actions
   addEmployment: (employment: Omit<Employment, 'id'>) => void;
   updateEmployment: (id: string, employment: Partial<Employment>) => void;
   deleteEmployment: (id: string) => void;
+  reorderEmployment: (employment: Employment[]) => void;
 
   // Skills Actions
   addSkill: (skill: Omit<Skill, 'id'>) => void;
   updateSkill: (id: string, skill: Partial<Skill>) => void;
   deleteSkill: (id: string) => void;
+  reorderSkills: (skills: Skill[]) => void;
 
   // Languages Actions
   addLanguage: (language: Omit<Language, 'id'>) => void;
   updateLanguage: (id: string, language: Partial<Language>) => void;
   deleteLanguage: (id: string) => void;
+  reorderLanguages: (languages: Language[]) => void;
 
   // Hobbies Actions
   addHobby: (hobby: string) => void;
   updateHobby: (index: number, hobby: string) => void;
   deleteHobby: (index: number) => void;
+  reorderHobbies: (hobbies: string[]) => void;
 
   // Optional Sections Actions
   addCourse: (course: Omit<Course, 'id'>) => void;
   updateCourse: (id: string, course: Partial<Course>) => void;
   deleteCourse: (id: string) => void;
+  reorderCourses: (courses: Course[]) => void;
 
   addInternship: (internship: Omit<Internship, 'id'>) => void;
   updateInternship: (id: string, internship: Partial<Internship>) => void;
   deleteInternship: (id: string) => void;
+  reorderInternships: (internships: Internship[]) => void;
 
   addExtracurricularActivity: (activity: Omit<ExtracurricularActivity, 'id'>) => void;
   updateExtracurricularActivity: (id: string, activity: Partial<ExtracurricularActivity>) => void;
@@ -149,18 +156,22 @@ interface ResumeStore {
   addReference: (reference: Omit<Reference, 'id'>) => void;
   updateReference: (id: string, reference: Partial<Reference>) => void;
   deleteReference: (id: string) => void;
+  reorderReferences: (references: Reference[]) => void;
 
   addQuality: (quality: Omit<Quality, 'id'>) => void;
   updateQuality: (id: string, quality: Partial<Quality>) => void;
   deleteQuality: (id: string) => void;
+  reorderQualities: (qualities: Quality[]) => void;
 
   addCertificate: (certificate: Omit<Certificate, 'id'>) => void;
   updateCertificate: (id: string, certificate: Partial<Certificate>) => void;
   deleteCertificate: (id: string) => void;
+  reorderCertificates: (certificates: Certificate[]) => void;
 
   addAchievement: (achievement: Omit<Achievement, 'id'>) => void;
   updateAchievement: (id: string, achievement: Partial<Achievement>) => void;
   deleteAchievement: (id: string) => void;
+  reorderAchievements: (achievements: Achievement[]) => void;
 
   updateFooter: (description: string) => void;
 
@@ -247,6 +258,15 @@ export const useResumeStore = create<ResumeStore>()(
           uiState: { ...state.uiState, isDirty: true }
         })),
 
+      reorderEducation: (education) =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            education
+          },
+          uiState: { ...state.uiState, isDirty: true }
+        })),
+
       // Employment Actions
       addEmployment: (employment) =>
         set((state) => ({
@@ -273,6 +293,15 @@ export const useResumeStore = create<ResumeStore>()(
           resumeData: {
             ...state.resumeData,
             employment: state.resumeData.employment.filter((item) => item.id !== id)
+          },
+          uiState: { ...state.uiState, isDirty: true }
+        })),
+
+      reorderEmployment: (employment) =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            employment
           },
           uiState: { ...state.uiState, isDirty: true }
         })),
@@ -307,6 +336,15 @@ export const useResumeStore = create<ResumeStore>()(
           uiState: { ...state.uiState, isDirty: true }
         })),
 
+      reorderSkills: (skills) =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            skills
+          },
+          uiState: { ...state.uiState, isDirty: true }
+        })),
+
       // Languages Actions
       addLanguage: (language) =>
         set((state) => ({
@@ -337,6 +375,15 @@ export const useResumeStore = create<ResumeStore>()(
           uiState: { ...state.uiState, isDirty: true }
         })),
 
+      reorderLanguages: (languages) =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            languages
+          },
+          uiState: { ...state.uiState, isDirty: true }
+        })),
+
       // Hobbies Actions
       addHobby: (hobby) =>
         set((state) => ({
@@ -361,6 +408,15 @@ export const useResumeStore = create<ResumeStore>()(
           resumeData: {
             ...state.resumeData,
             hobbies: state.resumeData.hobbies.filter((_, i) => i !== index)
+          },
+          uiState: { ...state.uiState, isDirty: true }
+        })),
+
+      reorderHobbies: (hobbies) =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            hobbies
           },
           uiState: { ...state.uiState, isDirty: true }
         })),
@@ -395,6 +451,15 @@ export const useResumeStore = create<ResumeStore>()(
           uiState: { ...state.uiState, isDirty: true }
         })),
 
+      reorderCourses: (courses) =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            courses
+          },
+          uiState: { ...state.uiState, isDirty: true }
+        })),
+
       addInternship: (internship) =>
         set((state) => ({
           resumeData: {
@@ -420,6 +485,15 @@ export const useResumeStore = create<ResumeStore>()(
           resumeData: {
             ...state.resumeData,
             internships: state.resumeData.internships.filter((item) => item.id !== id)
+          },
+          uiState: { ...state.uiState, isDirty: true }
+        })),
+
+      reorderInternships: (internships) =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            internships
           },
           uiState: { ...state.uiState, isDirty: true }
         })),
@@ -487,6 +561,15 @@ export const useResumeStore = create<ResumeStore>()(
           uiState: { ...state.uiState, isDirty: true }
         })),
 
+      reorderReferences: (references) =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            references
+          },
+          uiState: { ...state.uiState, isDirty: true }
+        })),
+
       addQuality: (quality) =>
         set((state) => ({
           resumeData: {
@@ -512,6 +595,15 @@ export const useResumeStore = create<ResumeStore>()(
           resumeData: {
             ...state.resumeData,
             qualities: state.resumeData.qualities.filter((item) => item.id !== id)
+          },
+          uiState: { ...state.uiState, isDirty: true }
+        })),
+
+      reorderQualities: (qualities) =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            qualities
           },
           uiState: { ...state.uiState, isDirty: true }
         })),
@@ -545,6 +637,15 @@ export const useResumeStore = create<ResumeStore>()(
           uiState: { ...state.uiState, isDirty: true }
         })),
 
+      reorderCertificates: (certificates) =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            certificates
+          },
+          uiState: { ...state.uiState, isDirty: true }
+        })),
+
       addAchievement: (achievement) =>
         set((state) => ({
           resumeData: {
@@ -570,6 +671,15 @@ export const useResumeStore = create<ResumeStore>()(
           resumeData: {
             ...state.resumeData,
             achievements: state.resumeData.achievements.filter((item) => item.id !== id)
+          },
+          uiState: { ...state.uiState, isDirty: true }
+        })),
+
+      reorderAchievements: (achievements) =>
+        set((state) => ({
+          resumeData: {
+            ...state.resumeData,
+            achievements
           },
           uiState: { ...state.uiState, isDirty: true }
         })),
@@ -780,4 +890,4 @@ export const useResumeStore = create<ResumeStore>()(
       })
     }
   )
-); 
+);
