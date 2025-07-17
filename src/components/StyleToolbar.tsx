@@ -1,7 +1,7 @@
 'use client';
 
+import React, { useState, useRef, useEffect } from 'react';
 import { useResumeStore } from '@/store/useResumeStore';
-import { Select } from '@/components/ui';
 import { templates } from '@/lib/templates';
 
 const fontOptions = [
@@ -32,112 +32,235 @@ const lineHeightOptions = [
 ];
 
 const colorOptions = [
-  { value: '#2563eb', label: 'Blue', color: '#2563eb' },
-  { value: '#dc2626', label: 'Red', color: '#dc2626' },
-  { value: '#059669', label: 'Green', color: '#059669' },
-  { value: '#7c3aed', label: 'Purple', color: '#7c3aed' },
-  { value: '#ea580c', label: 'Orange', color: '#ea580c' },
-  { value: '#374151', label: 'Gray', color: '#374151' }
+  { value: '#1f2937', label: 'Dark Gray', color: '#1f2937' },
+  { value: '#3b82f6', label: 'Blue', color: '#3b82f6' },
+  { value: '#10b981', label: 'Emerald', color: '#10b981' },
+  { value: '#8b5cf6', label: 'Violet', color: '#8b5cf6' },
+  { value: '#f59e0b', label: 'Amber', color: '#f59e0b' },
+  { value: '#ef4444', label: 'Red', color: '#ef4444' },
+  { value: '#6366f1', label: 'Indigo', color: '#6366f1' },
+  { value: '#14b8a6', label: 'Teal', color: '#14b8a6' },
+  { value: '#f97316', label: 'Orange', color: '#f97316' }
 ];
+
+interface DropdownProps {
+  options: Array<{ value: string; label: string }>;
+  value: string;
+  onChange: (value: string) => void;
+  children: React.ReactNode;
+}
+
+const Dropdown: React.FC<DropdownProps> = ({ options, value, onChange, children }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center space-x-1 px-2 py-1 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors"
+      >
+        {children}
+        <svg className="w-3 h-3 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div className="absolute bottom-full left-0 mb-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 min-w-[120px]">
+          {options.map((option) => (
+            <button
+              key={option.value}
+              onClick={() => {
+                onChange(option.value);
+                setIsOpen(false);
+              }}
+              className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100 first:rounded-t-md last:rounded-b-md ${
+                value === option.value ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+interface ColorDropdownProps {
+  value: string;
+  onChange: (value: string) => void;
+}
+
+const ColorDropdown: React.FC<ColorDropdownProps> = ({ value, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center space-x-1 px-2 py-1 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z" />
+        </svg>
+        <svg className="w-3 h-3 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div className="absolute bottom-full left-0 mb-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 p-4 min-w-[140px]">
+          <div className="grid grid-cols-3 gap-4">
+            {colorOptions.map((color) => (
+              <button
+                key={color.value}
+                onClick={() => {
+                  onChange(color.value);
+                  setIsOpen(false);
+                }}
+                className={`w-8 h-8 rounded-full shadow-sm hover:scale-105 transition-transform ${
+                  value === color.value ? 'ring-2 ring-gray-400 ring-offset-2' : ''
+                }`}
+                style={{ backgroundColor: color.color }}
+                title={color.label}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const StyleToolbar: React.FC = () => {
   const { uiState, updateStyleSettings } = useResumeStore();
   const { styleSettings } = uiState;
+  const [templateDropdownOpen, setTemplateDropdownOpen] = useState(false);
+  const templateDropdownRef = useRef<HTMLDivElement>(null);
 
   const handleStyleChange = (field: string, value: string | number) => {
     updateStyleSettings({ [field]: value });
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (templateDropdownRef.current && !templateDropdownRef.current.contains(event.target as Node)) {
+        setTemplateDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
-    <div className="bg-white border-t border-gray-200 shadow-lg no-print">
-      <div className="px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-6">
-            {/* Template Selector */}
-            <div className="flex items-center space-x-2">
-              <label className="text-sm font-medium text-gray-700">Template:</label>
-              <div className="flex space-x-2">
-                {templates.map((template) => (
-                  <button
-                    key={template.id}
-                    onClick={() => handleStyleChange('templateId', template.id)}
-                    className={`px-3 py-2 text-xs rounded border ${
-                      styleSettings.templateId === template.id
-                        ? 'bg-primary-100 border-primary-300 text-primary-700'
-                        : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                    }`}
-                    title={template.description}
-                  >
-                    {template.name}
-                  </button>
-                ))}
-              </div>
+    <div className="fixed bottom-4 bg-white border border-gray-200 rounded-lg shadow-lg z-50 no-print" style={{ left: '75%', transform: 'translateX(-50%)' }}>
+      <div className="flex items-center px-4 py-2 space-x-4">
+        {/* Template Selector */}
+        <div className="relative" ref={templateDropdownRef}>
+          <button
+            onClick={() => setTemplateDropdownOpen(!templateDropdownOpen)}
+            className="flex items-center space-x-1 px-2 py-1 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+            <svg className="w-3 h-3 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          
+          {templateDropdownOpen && (
+            <div className="absolute bottom-full left-0 mb-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 min-w-[120px]">
+              {templates.map((template) => (
+                <button
+                  key={template.id}
+                  onClick={() => {
+                    handleStyleChange('templateId', template.id);
+                    setTemplateDropdownOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100 first:rounded-t-md last:rounded-b-md ${
+                    styleSettings.templateId === template.id ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
+                  }`}
+                >
+                  {template.name}
+                </button>
+              ))}
             </div>
-
-            {/* Font Controls */}
-            <div className="flex items-center space-x-4">
-              <div className="w-32">
-                <Select
-                  value={styleSettings.fontFamily}
-                  onChange={(e) => handleStyleChange('fontFamily', e.target.value)}
-                  options={fontOptions}
-                />
-              </div>
-              
-              <div className="w-20">
-                <Select
-                  value={styleSettings.fontSize.toString()}
-                  onChange={(e) => handleStyleChange('fontSize', parseInt(e.target.value))}
-                  options={fontSizeOptions}
-                />
-              </div>
-              
-              <div className="w-20">
-                <Select
-                  value={styleSettings.lineHeight.toString()}
-                  onChange={(e) => handleStyleChange('lineHeight', parseFloat(e.target.value))}
-                  options={lineHeightOptions}
-                />
-              </div>
-            </div>
-
-            {/* Color Picker */}
-            <div className="flex items-center space-x-2">
-              <label className="text-sm font-medium text-gray-700">Color:</label>
-              <div className="flex space-x-1">
-                {colorOptions.map((color) => (
-                  <button
-                    key={color.value}
-                    onClick={() => handleStyleChange('primaryColor', color.value)}
-                    className={`w-8 h-8 rounded border-2 ${
-                      styleSettings.primaryColor === color.value
-                        ? 'border-gray-900'
-                        : 'border-gray-300'
-                    }`}
-                    style={{ backgroundColor: color.color }}
-                    title={color.label}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Preview Toggle */}
-          <div className="flex items-center space-x-4">
-            <button className="btn-secondary text-sm">
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-              </svg>
-              Preview
-            </button>
-            
-            <div className="text-sm text-gray-500">
-              {uiState.isDirty ? 'Unsaved changes' : 'All changes saved'}
-            </div>
-          </div>
+          )}
         </div>
+
+        <div className="w-px h-6 bg-gray-300"></div>
+
+        {/* Font Family */}
+        <Dropdown
+          options={fontOptions}
+          value={styleSettings.fontFamily}
+          onChange={(value) => handleStyleChange('fontFamily', value)}
+        >
+          <span className="font-serif text-base">Aa</span>
+        </Dropdown>
+
+        {/* Font Size */}
+        <Dropdown
+          options={fontSizeOptions}
+          value={styleSettings.fontSize.toString()}
+          onChange={(value) => handleStyleChange('fontSize', parseInt(value))}
+        >
+          <span className="font-bold text-sm">tT</span>
+        </Dropdown>
+
+        {/* Line Height */}
+        <Dropdown
+          options={lineHeightOptions}
+          value={styleSettings.lineHeight.toString()}
+          onChange={(value) => handleStyleChange('lineHeight', parseFloat(value))}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+          </svg>
+        </Dropdown>
+
+        {/* Color Picker */}
+        <ColorDropdown
+          value={styleSettings.primaryColor}
+          onChange={(value) => handleStyleChange('primaryColor', value)}
+        />
+
+        <div className="w-px h-6 bg-gray-300"></div>
+
+        {/* Fullscreen Toggle */}
+        <button className="flex items-center px-2 py-1 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded transition-colors">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+          </svg>
+        </button>
       </div>
     </div>
   );
-}; 
+};

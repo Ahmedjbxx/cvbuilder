@@ -19,13 +19,13 @@ export const PreviewPanel: React.FC = () => {
   if (!selectedTemplate) {
     return (
       <div className="h-full flex flex-col">
-        <div className="flex-1 flex items-center justify-center bg-gray-100">
+        <div className="flex-1 flex items-center justify-center bg-gray-100 relative">
           <div className="text-center">
             <h3 className="text-lg font-medium text-gray-900 mb-2">Template not found</h3>
             <p className="text-gray-600">The selected template could not be loaded.</p>
           </div>
+          <StyleToolbar />
         </div>
-        <StyleToolbar />
       </div>
     );
   }
@@ -34,7 +34,7 @@ export const PreviewPanel: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex-1 overflow-y-auto bg-gray-100 p-6">
+      <div className="flex-1 overflow-y-auto bg-gray-100 p-6 relative">
         <div className="flex justify-center">
           <div className="a4-preview p-a4-margin">
             <TemplateComponent
@@ -44,8 +44,8 @@ export const PreviewPanel: React.FC = () => {
             />
           </div>
         </div>
+        <StyleToolbar />
       </div>
-      <StyleToolbar />
     </div>
   );
 }; 
