@@ -1,0 +1,213 @@
+{
+  "personalDetails": {
+    "firstName": "Sarah",
+    "lastName": "Johnson",
+    "headline": "Senior Frontend Developer",
+    "email": "sarah.johnson@email.com",
+    "phone": "+1 (555) 123-4567",
+    "address": "123 Tech Street",
+    "postcode": "94102",
+    "city": "San Francisco",
+    "optionalFields": {
+      "dob": "1990-03-15",
+      "website": "https://sarahjohnson.dev",
+      "linkedin": "https://linkedin.com/in/sarahjohnson",
+      "custom": {
+        "label": "GitHub",
+        "value": "https://github.com/sarahjohnson"
+      }
+    }
+  },
+  "profile": "Passionate frontend developer with 6+ years of experience building scalable web applications using React, TypeScript, and modern development practices. Proven track record of leading development teams and delivering high-quality user experiences. Experienced in agile methodologies and cross-functional collaboration.",
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "University of California, Berkeley",
+      "start": "2014-09",
+      "end": "2018-05",
+      "ongoing": false,
+      "description": "GPA: 3.7/4.0. Relevant Coursework: Data Structures, Algorithms, Web Development, Database Systems. Dean's List: Fall 2016, Spring 2017."
+    },
+    {
+      "degree": "Full Stack Web Development Bootcamp",
+      "school": "General Assembly",
+      "start": "2017-06",
+      "end": "2017-09",
+      "ongoing": false,
+      "description": "Intensive 12-week program covering HTML, CSS, JavaScript, React, Node.js. Built 3 full-stack web applications as capstone projects."
+    }
+  ],
+  "employment": [
+    {
+      "position": "Senior Frontend Developer",
+      "company": "TechCorp Solutions",
+      "start": "2021-06",
+      "end": "",
+      "ongoing": true,
+      "description": "Led development of a React-based dashboard serving 50K+ daily users. Implemented automated testing reducing bugs by 40%. Mentored 3 junior developers and conducted code reviews."
+    },
+    {
+      "position": "Frontend Developer",
+      "company": "StartupXYZ",
+      "start": "2019-03",
+      "end": "2021-05",
+      "ongoing": false,
+      "description": "Built responsive web applications using React and Redux. Optimized application performance resulting in 30% faster load times. Integrated RESTful APIs and handled state management."
+    },
+    {
+      "position": "Junior Web Developer",
+      "company": "WebAgency Inc",
+      "start": "2018-01",
+      "end": "2019-02",
+      "ongoing": false,
+      "description": "Developed client websites using HTML, CSS, JavaScript, and WordPress. Worked closely with designers to implement pixel-perfect designs."
+    }
+  ],
+  "skills": [
+    {
+      "name": "JavaScript",
+      "level": "Excellent"
+    },
+    {
+      "name": "React",
+      "level": "Excellent"
+    },
+    {
+      "name": "TypeScript",
+      "level": "Intermediate"
+    },
+    {
+      "name": "Node.js",
+      "level": "Intermediate"
+    },
+    {
+      "name": "Python",
+      "level": "Beginner"
+    },
+    {
+      "name": "AWS",
+      "level": "Beginner"
+    }
+  ],
+  "languages": [
+    {
+      "name": "English",
+      "level": "Native"
+    },
+    {
+      "name": "Spanish",
+      "level": "Fluent"
+    },
+    {
+      "name": "French",
+      "level": "Basic"
+    }
+  ],
+  "hobbies": [
+    "Open Source Contributing",
+    "Photography",
+    "Hiking",
+    "Cooking"
+  ],
+  "courses": [
+    {
+      "name": "AWS Certified Developer Associate",
+      "startMonth": "August",
+      "startYear": "2023",
+      "endMonth": "September",
+      "endYear": "2023",
+      "ongoing": false,
+      "description": "Comprehensive certification covering AWS services, deployment, and cloud architecture best practices."
+    },
+    {
+      "name": "Advanced React Patterns",
+      "startMonth": "January",
+      "startYear": "2023",
+      "endMonth": "March",
+      "endYear": "2023",
+      "ongoing": false,
+      "description": "Deep dive into advanced React concepts including hooks, context, performance optimization, and testing strategies."
+    }
+  ],
+  "internships": [
+    {
+      "position": "Software Development Intern",
+      "employer": "Google",
+      "city": "Mountain View",
+      "startMonth": "June",
+      "startYear": "2017",
+      "endMonth": "August",
+      "endYear": "2017",
+      "ongoing": false,
+      "description": "Worked on the Google Maps team to develop new features for location-based services. Gained experience with large-scale systems and agile development processes."
+    }
+  ],
+  "extracurricularActivities": [
+    {
+      "position": "President",
+      "employer": "Computer Science Club",
+      "city": "Berkeley",
+      "startMonth": "September",
+      "startYear": "2016",
+      "endMonth": "May",
+      "endYear": "2018",
+      "ongoing": false,
+      "description": "Led a team of 50+ students in organizing hackathons, workshops, and networking events. Increased club membership by 200% during tenure."
+    }
+  ],
+  "references": [
+    {
+      "name": "John Smith",
+      "organization": "TechCorp Solutions",
+      "city": "San Francisco",
+      "phone": "+1 (555) 987-6543",
+      "email": "john.smith@techcorp.com"
+    },
+    {
+      "name": "Jane Doe",
+      "organization": "StartupXYZ",
+      "city": "San Francisco",
+      "phone": "+1 (555) 456-7890",
+      "email": "jane.doe@startupxyz.com"
+    }
+  ],
+  "qualities": [
+    {
+      "quality": "Strong problem-solving abilities"
+    },
+    {
+      "quality": "Excellent communication skills"
+    },
+    {
+      "quality": "Team leadership experience"
+    },
+    {
+      "quality": "Attention to detail"
+    }
+  ],
+  "certificates": [
+    {
+      "name": "Meta React Developer Certificate",
+      "startMonth": "October",
+      "startYear": "2022",
+      "endMonth": "December",
+      "endYear": "2022",
+      "ongoing": false,
+      "description": "Professional certificate demonstrating proficiency in React development, including component design, state management, and testing."
+    }
+  ],
+  "achievements": [
+    {
+      "description": "Built and launched a React-based e-commerce platform that increased client sales by 150%"
+    },
+    {
+      "description": "Led a team that won first place in the 2023 San Francisco Tech Hackathon"
+    },
+    {
+      "description": "Contributed to 5+ open source projects with over 1000 stars on GitHub"
+    }
+  ],
+  "footer": {
+    "description": "References available upon request. Portfolio: sarahjohnson.dev"
+  }
+} 

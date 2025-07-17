@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
+  
+  * {
+    @apply box-border;
+  }
+}
+
+@layer components {
+  .drag-handle {
+    @apply opacity-60 hover:opacity-100 transition-opacity duration-200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .form-input {
+    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm;
+  }
+  
+  .form-textarea {
+    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm min-h-[100px] resize-y;
+  }
+  
+  .form-select {
+    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm;
+  }
+  
+  .btn-primary {
+    @apply inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-secondary {
+    @apply inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+
+  
+  .a4-preview {
+    width: 816px;
+    min-height: 1056px;
+    @apply bg-white shadow-lg mx-auto;
+    transform-origin: top center;
+  }
+  
+  .rich-text-editor {
+    @apply border border-gray-300 rounded-md;
+  }
+  
+  .rich-text-editor .ql-toolbar {
+    @apply border-b border-gray-300 bg-gray-50;
+  }
+  
+  .rich-text-editor .ql-container {
+    @apply border-0;
+  }
+  
+  .rich-text-editor .ql-editor {
+    @apply min-h-[100px] text-sm;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .drag-ghost {
+    @apply opacity-50 transform rotate-2;
+  }
+  
+  .drop-indicator {
+    @apply border-2 border-dashed border-primary-300 bg-primary-50;
+  }
+  
+
+}
+
+/* Page break styles */
+.page-break {
+  page-break-before: always;
+  break-before: page;
+  height: 1px;
+  width: 100%;
+  border: none;
+  margin: 0;
+}
+
+/* Visual page break indicator in preview */
+.page-break::before {
+  content: "Page Break";
+  display: block;
+  text-align: center;
+  color: #6b7280;
+  font-size: 12px;
+  padding: 8px 0;
+  border-top: 2px dashed #d1d5db;
+  margin: 16px 0;
+}
+
+
+
+/* Print styles for PDF export */
+@media print {
+  body {
+    @apply bg-white;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  .a4-preview {
+    box-shadow: none !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+  
+  /* Hide visual indicators in print but keep actual page breaks */
+  .page-break::before {
+    display: none;
+  }
+} 
